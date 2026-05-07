@@ -84,7 +84,7 @@ It intercepts `console.*` methods, `fetch`, and `XMLHttpRequest` at the source, 
 
 ## Installation
 
-DevConsole is a single self-contained HTML file. For use as a script, extract the `<style>` and `<script>` blocks.
+DevConsole is a single self-contained HTML file. For use as a script, use debugger.js
 
 ### Quickstart — script tag
 
