@@ -1,14 +1,14 @@
-# DevConsole
+# insikt - DevConsole for Mobile
 
 **A drop-in, mobile-first in-page debugger for web apps.**
 
-DevConsole gives you a full-featured debugging panel directly inside your page — no browser dev tools required. Built for mobile devices, WebViews, kiosks, smart TVs, and any environment where native dev tools are absent or inaccessible.
+insikt gives you a full-featured debugging panel directly inside your page — no browser dev tools required. Built for mobile devices, WebViews, kiosks, smart TVs, and any environment where native dev tools are absent or inaccessible.
 
 -----
 
-## Why DevConsole
+## Why insikt
 
-Native browser dev tools are unavailable in a surprising number of real-world scenarios: mobile Safari and Chrome on a physical device, embedded WebViews in native apps, signage players running on LG WebOS or Samsung Tizen, kiosk browsers, and remote test environments. DevConsole fills that gap by injecting a persistent, resizable debug panel directly into your page.
+Native browser dev tools are unavailable in a surprising number of real-world scenarios: mobile Safari and Chrome on a physical device, embedded WebViews in native apps, signage players running on LG WebOS or Samsung Tizen, kiosk browsers, and remote test environments. insikt fills that gap by injecting a persistent, resizable debug panel directly into your page.
 
 It intercepts `console.*` methods, `fetch`, and `XMLHttpRequest` at the source, so you see everything — including logs and requests fired before the panel was opened.
 
@@ -84,24 +84,24 @@ It intercepts `console.*` methods, `fetch`, and `XMLHttpRequest` at the source, 
 
 ## Installation
 
-DevConsole is a single self-contained HTML file. For use as a script, use debugger.js
+insikt is a single self-contained HTML file. For use as a script, use debugger.js
 
 ### Quickstart — script tag
 
 Add the following line to any HTML page, just before `</body>`:
 
 ```html
-<script src="devconsole.js"></script>
+<script src="insikt.js"></script>
 ```
 
 The panel initialises automatically on `DOMContentLoaded` (or immediately if the DOM is already ready). No configuration is required.
 
 ### Bookmarklet
 
-To inject DevConsole into any already-loaded page from your browser’s bookmark bar:
+To inject insikt into any already-loaded page from your browser’s bookmark bar:
 
 ```javascript
-javascript:(function(){var s=document.createElement('script');s.src='https://your-cdn.com/devconsole.js';document.body.appendChild(s);})();
+javascript:(function(){var s=document.createElement('script');s.src='https://your-cdn.com/insikt.js';document.body.appendChild(s);})();
 ```
 
 Replace the URL with wherever you host the file.
@@ -110,7 +110,7 @@ Replace the URL with wherever you host the file.
 
 ```javascript
 var s = document.createElement('script');
-s.src = 'https://your-cdn.com/devconsole.js';
+s.src = 'https://your-cdn.com/insikt.js';
 document.body.appendChild(s);
 ```
 
