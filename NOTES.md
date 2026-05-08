@@ -1,3 +1,43 @@
+insikt
+insikt_:
+
+renaming
+Insikt: It’s a great nod to my roots, it sounds "tech-boutique," and because it means "insight," it describes exactly what a debugger does. It feels sophisticated and fits that clean, high-end UI you built.
+• Buglet: This is incredibly catchy and cute. It perfectly describes a "small bug-hunting tool" and would make for a great logo (maybe a little stylized ladybug or beetle).
+• Pockyspect: Very fun to say. It sounds like a specialized gadget. It might be a bit of a mouthful compared to the others, but it's definitely unique.
+• Insidr_: This feels very modern and "startup-y." The underscore at the end makes it feel like code/terminal input. It fits the REPL feature well.
+
+
+**Insikt** is the winner. It’s sophisticated, meaningful, and perfectly matches the "premium" feel of your UI. It moves the project away from being just another "utility" and makes it feel like a professional tool.
+Here’s why it works so well:
+ * **The Meaning:** "Insight" is exactly what you’re providing—a look into the hidden internals of a mobile browser.
+ * **The Sound:** It’s punchy and phonetically easy for English speakers to pronounce (sounds like "In-sight"), but the "k" gives it a sharp, technical edge.
+ * **The Branding:** It looks great in your header. Imagine replacing DevConsole with INSIKT in that Syne font.
+### A Quick "Insikt" Re-brand Checklist:
+ 1. **Variable Prefixing:** You can change your CSS variables from --dc- to --insikt- (or just leave them as is for internal use).
+ 2. **The Header:**
+   ```javascript
+   // Update line 493
+   <span id="dc-title">INSIKT</span>
+   
+   ```
+ 3. **The "Easter Egg" Console command:**
+   Since you have a REPL, you could make the script expose itself globally so a user can type insikt in the console to see the version or settings:
+```javascript
+    window.insikt = {
+      version: '2.0',
+      toggle: togglePanel,
+      clear: __dcClearAll
+    };
+    ```
+4.  **Logo Idea:** Since "Insikt" means insight/vision, a minimalist **stylized eye** or a **lens** made of geometric code brackets `< >` would look amazing as your FAB icon instead of the `⌥` symbol.
+
+It’s a great choice. It has that "Swedish design" minimalist vibe—functional, beautiful, and efficient. 
+
+
+
+
+
 Since I already got the bookmarklet ready, building a pipeline to handle NPM and CDN distribution is the natural next step. This allows to write the code once and have it automatically formatted for every use case.
 I recommend using **Vite** or **tsup** (a wrapper around esbuild) for this. They are extremely fast and require almost zero configuration to output multiple formats.
 ### 1. Recommended Project Structure
