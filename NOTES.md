@@ -146,11 +146,9 @@ if (typeof window !== 'undefined') {
 
 ⸻
 
-README.md
 
-MOST IMPORTANT file.
 
-README.md
+
 
 ⸻
 
@@ -168,30 +166,7 @@ It should be:
 
 docs/index.html
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>INSIKT</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <main class="hero">
-    <h1>INSIKT</h1>
-    <p>
-      Mobile-first browser debugging.
-    </p>
-    <div class="buttons">
-      <a href="https://github.com/benneberg/insikt">
-        GitHub
-      </a>
-      <a href="./demo.html">
-        Live Demo
-      </a>
-    </div>
-  </main>
-</body>
-</html>
+
 
 ⸻
 
