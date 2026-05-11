@@ -172,35 +172,6 @@ docs/index.html
 
 docs/style.css
 
-body {
-  margin: 0;
-  background: #0f1115;
-  color: white;
-  font-family: Inter, sans-serif;
-}
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-h1 {
-  font-size: 5rem;
-  letter-spacing: 0.15em;
-}
-.buttons {
-  display: flex;
-  gap: 1rem;
-}
-a {
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  background: #1c1f26;
-  color: white;
-  text-decoration: none;
-}
 
 ⸻
 
