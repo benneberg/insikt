@@ -2,23 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>INSIKT</title>
+
   <link rel="stylesheet" href="./style.css" />
 </head>
+
 <body>
-  <main class="hero">
-    <h1>INSIKT</h1>
-    <p>
-      Mobile-first browser debugging.
-    </p>
-    <div class="buttons">
-      <a href="https://github.com/benneberg/insikt">
-        GitHub
-      </a>
-      <a href="./demo.html">
-        Live Demo
-      </a>
-    </div>
+
+  <main class="app">
+
+    <!-- HERO -->
+    <section class="hero">
+      <h1>INSIKT</h1>
+      <p class="subtitle">
+        Mobile-first in-page debugging system
+      </p>
+
+      <p class="description">
+        Capture logs, network calls, errors, storage, and runtime events directly inside the browser.
+      </p>
+    </section>
+
+    <!-- PRIMARY ACTION -->
+    <section class="primary">
+      <button id="activateBtn" class="btn primary-btn">
+        Activate INSIKT
+      </button>
+    </section>
+
+    <!-- DEMO -->
+    <section class="demo">
+      <h2>Demo</h2>
+
+      <button id="demoBtn" class="btn secondary-btn">
+        ▶ Run simulated debug session
+      </button>
+
+      <p class="hint">
+        Generates logs, network requests, errors, and async events.
+      </p>
+    </section>
+
+    <!-- ADVANCED -->
+    <section class="advanced">
+
+      <button id="toggleAdvanced" class="btn link-btn">
+        Advanced triggers ▾
+      </button>
+
+      <div id="advancedPanel" class="advanced-panel hidden">
+
+        <button class="mini" data-action="log">Log Object</button>
+        <button class="mini" data-action="warn">Warn</button>
+        <button class="mini" data-action="error">Error</button>
+        <button class="mini" data-action="info">Info</button>
+
+        <button class="mini" data-action="fetch">Test Fetch</button>
+        <button class="mini" data-action="xhr">Test XHR</button>
+
+        <button class="mini" data-action="idb">Seed IndexedDB</button>
+
+        <button class="mini danger" data-action="throw">Throw Error</button>
+        <button class="mini danger" data-action="reject">Reject Promise</button>
+
+      </div>
+
+    </section>
+
+    <!-- STATUS -->
+    <footer class="status">
+      Status: idle • Capture: off • Session: none
+    </footer>
+
   </main>
+
+  <script type="module" src="./demo.js"></script>
+
 </body>
 </html>
