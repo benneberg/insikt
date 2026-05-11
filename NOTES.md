@@ -1,127 +1,563 @@
-insikt
-insikt_:
+Need:
 
-renaming
-Insikt: It’s a great nod to my roots, it sounds "tech-boutique," and because it means "insight," it describes exactly what a debugger does. It feels sophisticated and fits that clean, high-end UI you built.
-• Buglet: This is incredibly catchy and cute. It perfectly describes a "small bug-hunting tool" and would make for a great logo (maybe a little stylized ladybug or beetle).
-• Pockyspect: Very fun to say. It sounds like a specialized gadget. It might be a bit of a mouthful compared to the others, but it's definitely unique.
-• Insidr_: This feels very modern and "startup-y." The underscore at the end makes it feel like code/terminal input. It fits the REPL feature well.
-
-
-**Insikt** is the winner. It’s sophisticated, meaningful, and perfectly matches the "premium" feel of your UI. It moves the project away from being just another "utility" and makes it feel like a professional tool.
-Here’s why it works so well:
- * **The Meaning:** "Insight" is exactly what you’re providing—a look into the hidden internals of a mobile browser.
- * **The Sound:** It’s punchy and phonetically easy for English speakers to pronounce (sounds like "In-sight"), but the "k" gives it a sharp, technical edge.
- * **The Branding:** It looks great in your header. Imagine replacing DevConsole with INSIKT in that Syne font.
-### A Quick "Insikt" Re-brand Checklist:
- 1. **Variable Prefixing:** You can change your CSS variables from --dc- to --insikt- (or just leave them as is for internal use).
- 2. **The Header:**
-   ```javascript
-   // Update line 493
-   <span id="dc-title">INSIKT</span>
-   
-   ```
- 3. **The "Easter Egg" Console command:**
-   Since you have a REPL, you could make the script expose itself globally so a user can type insikt in the console to see the version or settings:
-```javascript
-    window.insikt = {
-      version: '2.0',
-      toggle: togglePanel,
-      clear: __dcClearAll
-    };
-    ```
-4.  **Logo Idea:** Since "Insikt" means insight/vision, a minimalist **stylized eye** or a **lens** made of geometric code brackets `< >` would look amazing as your FAB icon instead of the `⌥` symbol.
-
-It’s a great choice. It has that "Swedish design" minimalist vibe—functional, beautiful, and efficient. 
+* repository structure
+* packaging
+* branding
+* onboarding flow
+* publishing pipeline
+* public API
+* documentation
+* GitHub Pages
+* npm release flow
 
 
+⸻
 
+Folder Structure
 
-
-Since I already got the bookmarklet ready, building a pipeline to handle NPM and CDN distribution is the natural next step. This allows to write the code once and have it automatically formatted for every use case.
-I recommend using **Vite** or **tsup** (a wrapper around esbuild) for this. They are extremely fast and require almost zero configuration to output multiple formats.
-### 1. Recommended Project Structure
-Organizing the files like this makes the build process seamless:
-```text
-/mobile-console
+insikt/
 ├── src/
-│   └── index.js      <-- Your current code (with the typo fixed!)
-├── package.json      <-- Build scripts & metadata
-├── vite.config.js    <-- The "magic" instructions
-└── README.md         <-- How to use the CDN vs NPM vs Bookmarklet
+│   └── index.js
+│
+├── dist/
+│
+├── docs/
+│   ├── index.html
+│   ├── demo.html
+│   ├── style.css
+│   └── assets/
+│       ├── screenshots/
+│       └── logo/
+│
+├── .github/
+│   └── workflows/
+│       ├── deploy-pages.yml
+│       └── publish-npm.yml
+│
+├── package.json
+├── vite.config.js
+├── README.md
+├── LICENSE
+├── .gitignore
+└── CHANGELOG.md
 
-```
-### 2. The package.json setup
-This tells NPM which file to use when someone imports your package vs. when they use a script tag.
-```json
+⸻
+
+PHASE 3 — Your Core Runtime Architecture
+
+
+At the top of src/index.js:
+
+const state = {
+  initialized: false,
+  panelVisible: false,
+  logs: [],
+  requests: [],
+  errors: [],
+  settings: {
+    theme: 'dark'
+  },
+  ui: {
+    root: null,
+    panel: null,
+    fab: null
+  }
+};
+
+
+⸻
+
+Proper Public API
+
+src/index.js
+
+Here is the architecture skeleton you should use.
+
+const VERSION = '1.0.0';
+const state = {
+  initialized: false,
+  panelVisible: false,
+  logs: [],
+  requests: [],
+  errors: [],
+  ui: {}
+};
+function initInsikt(options = {}) {
+  if (state.initialized) return;
+  state.initialized = true;
+  createUI();
+  attachConsoleProxy();
+  attachGlobalErrorHandler();
+  console.log('[INSIKT] initialized');
+}
+function destroyInsikt() {
+  removeUI();
+  state.initialized = false;
+  console.log('[INSIKT] destroyed');
+}
+function toggleInsikt() {
+  state.panelVisible = !state.panelVisible;
+  if (state.ui.panel) {
+    state.ui.panel.style.display =
+      state.panelVisible ? 'block' : 'none';
+  }
+}
+function clearLogs() {
+  state.logs = [];
+}
+function createUI() {
+  // Build overlay UI
+}
+function removeUI() {
+  // Cleanup
+}
+function attachConsoleProxy() {
+  const originalLog = console.log;
+  console.log = (...args) => {
+    state.logs.push(args);
+    originalLog.apply(console, args);
+  };
+}
+function attachGlobalErrorHandler() {
+  window.addEventListener('error', (event) => {
+    state.errors.push(event.error);
+  });
+}
+export {
+  initInsikt,
+  destroyInsikt,
+  toggleInsikt,
+  clearLogs
+};
+if (typeof window !== 'undefined') {
+  window.insikt = {
+    version: VERSION,
+    init: initInsikt,
+    destroy: destroyInsikt,
+    toggle: toggleInsikt,
+    clear: clearLogs
+  };
+  if (!window.__INSIKT_INITIALIZED__) {
+    window.__INSIKT_INITIALIZED__ = true;
+    initInsikt();
+  }
+}
+
+⸻
+
+Production vite.config.js
+vite.config.js
+
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+export default defineConfig({
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/index.js'),
+      name: 'Insikt',
+      fileName: (format) => {
+        return `insikt.${format}.js`;
+      },
+      formats: ['es', 'umd']
+    },
+    minify: 'terser',
+    sourcemap: true,
+    rollupOptions: {
+      external: [],
+      output: {
+        exports: 'named'
+      }
+    }
+  }
+});
+
+⸻
+
+Production package.json
+
+package.json
+
 {
-  "name": "mobile-console",
+  "name": "insikt.js",
   "version": "1.0.0",
+  "description": "A mobile-first in-browser developer console and debugging overlay.",
+  "license": "MIT",
   "type": "module",
-  "files": ["dist"],
-  "main": "./dist/mobile-console.umd.cjs",
-  "module": "./dist/mobile-console.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/insikt.umd.js",
+  "module": "./dist/insikt.es.js",
   "exports": {
     ".": {
-      "import": "./dist/mobile-console.js",
-      "require": "./dist/mobile-console.umd.cjs"
+      "import": "./dist/insikt.es.js",
+      "require": "./dist/insikt.umd.js"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "mobile",
+    "console",
+    "debug",
+    "browser",
+    "devtools",
+    "overlay",
+    "javascript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benneberg/insikt.git"
+  },
+  "homepage": "https://benneberg.github.io/insikt/",
+  "bugs": {
+    "url": "https://github.com/benneberg/insikt/issues"
+  },
+  "devDependencies": {
+    "terser": "^5.0.0",
+    "vite": "^5.0.0"
   }
 }
 
+⸻
+
+README.md
+
+MOST IMPORTANT file.
+
+README.md
+
+# INSIKT
+A mobile-first in-browser developer console and debugging overlay.
+INSIKT brings developer tooling directly into mobile browsers with an elegant overlay UI for logs, errors, requests, storage inspection, and runtime debugging.
+---
+# Features
+- Mobile-first debugging UI
+- Console log capture
+- Runtime error tracking
+- Fetch/XHR interception
+- Storage inspection
+- Built-in REPL
+- Floating overlay interface
+- Bookmarklet support
+- CDN delivery
+- NPM package
+- Zero dependencies
+---
+# Why INSIKT?
+Desktop DevTools are excellent.
+Mobile debugging is still painful.
+INSIKT was built to provide a clean, elegant, mobile-first debugging experience directly inside the browser without requiring remote debugging setups or desktop tooling.
+The project focuses on:
+- simplicity
+- speed
+- visibility
+- minimalism
+- developer ergonomics
+---
+# Installation
+## NPM
+```bash
+npm install insikt.js
 ```
-### 3. The vite.config.js (The Build Machine)
-This configuration will output a **minified** version for the CDN and a **module** version for NPM simultaneously.
+```js
+import 'insikt.js';
+```
+---
+## CDN
+```html
+<script src="https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js"></script>
+```
+---
+## Bookmarklet
+Create a bookmark with this URL:
 ```javascript
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
-
-export default defineConfig({
-  build: {
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.js'),
-      name: 'MobileConsole',
-      // The proper extensions will be added
-      fileName: 'mobile-console',
-      formats: ['es', 'umd']
-    },
-    rollupOptions: {
-      // Ensure to externalize deps if you ever add any
-      external: [],
-      output: {
-        // Provide global variables to use in the UMD build
-        globals: {}
-      }
-    },
-    minify: 'terser', // Maximize compression for mobile loading
-    sourcemap: true   // Helps you debug your own tool
-  }
-});
-
+javascript:(function(){
+const s=document.createElement('script');
+s.src='https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js';
+document.body.appendChild(s);
+})();
 ```
-### How this improves your workflow:
- * **Minification:** Your current script is around 25KB+ because of the CSS strings and documentation. A build tool will "minify" this (removing whitespace and shortening variable names), likely cutting the file size in half. This is critical for mobile debugging where network speeds vary.
- * **Versioned CDNs:** Once you run npm publish, anyone can access your tool via:
-   [https://cdn.jsdelivr.net/npm/mobile-console@latest/dist/mobile-console.umd.cjs](https://cdn.jsdelivr.net/npm/mobile-console@latest/dist/mobile-console.umd.cjs)
- * **Type Safety:** If you eventually want to move to TypeScript (highly recommended for a tool that intercepts global objects like fetch), Vite handles the conversion automatically.
-### A Tip for the Bookmarklet
-Since I already have a bookmarklet, I can make it "evergreen" by having the bookmarklet code simply inject a script tag that points to your CDN. That way, I only ever have to update the code on GitHub/NPM, and everyone's bookmarklets will automatically use the latest version!
-**Evergreen Bookmarklet Code:**
-```javascript
-javascript:(function(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/mobile-console@latest/dist/mobile-console.umd.cjs';document.body.appendChild(s);})();
-
+---
+# Usage
+INSIKT auto-initializes when loaded.
+Global API:
+```js
+window.insikt.toggle();
+window.insikt.clear();
+window.insikt.destroy();
+window.insikt.init();
 ```
+---
+# Screenshots
+## Floating Action Button
+(Add screenshot)
+## Console Overlay
+(Add screenshot)
+## Network Inspector
+(Add screenshot)
+---
+# Architecture
+INSIKT uses:
+- console proxying
+- fetch/XHR interception
+- runtime error listeners
+- overlay-based UI rendering
+- centralized runtime state
+- automatic cleanup lifecycle
+The library is designed to remain lightweight and dependency-free.
+---
+# Roadmap
+- [ ] console.table support
+- [ ] IndexedDB viewer
+- [ ] WebSocket inspector
+- [ ] Performance timeline
+- [ ] Plugin API
+- [ ] Theme system
+- [ ] Session export/import
+---
+# Browser Support
+- Safari iOS
+- Chrome Android
+- Samsung Internet
+- Chromium desktop browsers
+---
+# Development
+```bash
+npm install
+npm run dev
+```
+Build production bundle:
+```bash
+npm run build
+```
+---
+# License
+MIT
 
-Before go off and ship this to the world, here is a quick "Pre-Flight Checklist":
-### Final Polish Checklist
- * **Fix the REPL Typo:** Change if (runBtn) no runBtn... to if (runBtn) runBtn... on line 839.
- * **Safety First:** Add a try...catch around the JSON.stringify in your formatArg function to prevent circular reference crashes.
- * **Encapsulation:** If you move to the NPM/Vite route, try to remove those window.__dc... global functions and use event delegation. It makes your script much "politer" when injected into other people's websites.
- * **README Magic:** Since you have a Bookmarklet, a CDN, and now an NPM path, make sure your README clearly shows how to use each.
-### Pro-Tip: The "Console.table" challenge
-If want to take this to the next level (v2.1), try implementing a basic version of console.table. It’s one of the hardest things to render nicely on a small mobile screen, but it’s incredibly helpful for viewing arrays of objects!
+⸻
+
+GitHub Pages Landing Page
+
+Your GitHub Pages should NOT be a blank page.
+
+It should be:
+* homepage
+* install guide
+* demo
+* branding surface
+
+⸻
+
+docs/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>INSIKT</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="hero">
+    <h1>INSIKT</h1>
+    <p>
+      Mobile-first browser debugging.
+    </p>
+    <div class="buttons">
+      <a href="https://github.com/benneberg/insikt">
+        GitHub
+      </a>
+      <a href="./demo.html">
+        Live Demo
+      </a>
+    </div>
+  </main>
+</body>
+</html>
+
+⸻
+
+docs/style.css
+
+body {
+  margin: 0;
+  background: #0f1115;
+  color: white;
+  font-family: Inter, sans-serif;
+}
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+h1 {
+  font-size: 5rem;
+  letter-spacing: 0.15em;
+}
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+a {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  background: #1c1f26;
+  color: white;
+  text-decoration: none;
+}
+
+⸻
+
+Evergreen Bookmarklet
+
+Use THIS:
+
+javascript:(function(){
+const s=document.createElement('script');
+s.src='https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js';
+document.body.appendChild(s);
+})();
+
+NOT .cjs.
+
+⸻
+
+GitHub Actions
+
+.github/workflows/deploy-pages.yml
+
+name: Deploy Pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - uses: actions/deploy-pages@v4
+
+⸻
+
+Release Checklist
+
+Before publishing:
+
+MUST TEST
+
+iPhone Safari
+
+Especially:
+
+* keyboard overlap
+* viewport resize
+* touch drag
+* z-index issues
+
+Android Chrome
+
+Especially:
+
+* FAB positioning
+* scroll behavior
+* clipboard
+
+Samsung Internet
+
+Samsung Internet exposes weird rendering bugs.
+
+Test it.
+
+⸻
+
+Real Branding Direction
+
+insikt have a strong positioning opportunity.
+
+INSIKT should feel:
+
+* premium
+* minimalist
+* calm
+* technical
+* precise
+
+Think:
+
+* Linear
+* Vercel
+* Raycast
+* Arc Browser
+* Teenage Engineering
+
+NOT:
+
+* hacker-terminal gimmicks
+* neon cyberpunk
+* “1337 devtools”
+
+That Scandinavian design direction is a real differentiator in devtools.
+
+⸻
+
+Next Build 
+
+Priority order:
+
+v1.1
+
+* console.table
+* request filtering
+* better object inspection
+* collapsible logs
+
+v1.2
+
+* IndexedDB viewer
+* export logs
+* persistent sessions
+
+v2.0
+
+* plugin system
+* performance timeline
+* websocket inspector
+* React/Vue adapters
+
+⸻
+
+FINAL ADVICE
+
+This is the dangerous phase where developers:
+
+* endlessly refactor
+* endlessly rename
+* endlessly redesign
+
+Instead:
+
+Ship a clean v1.
+
+Then iterate.
+
+insikt core idea is already strong:
+
+elegant mobile-native debugging UX
+
+That niche is much less saturated than desktop devtools.
