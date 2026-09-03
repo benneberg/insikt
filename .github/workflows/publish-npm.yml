@@ -3,12 +3,13 @@ name: Publish to npm
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write # Required for npm provenance/trusted publishing
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Upgraded to Node 22
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -27,5 +28,7 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --provenance --access public
+        # Note: If you set up Trusted Publishing, you don't even need the NODE_AUTH_TOKEN env var!
+        # If you are using a classic token, keep this line:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
