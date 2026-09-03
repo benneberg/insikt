@@ -1,4 +1,17 @@
-# INSIKT
+# INSIKT 
+[![npm version](https://img.shields.io/npm/v/insikt.js.svg)](https://www.npmjs.com/package/insikt.js)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/insikt.js)](https://bundlephobia.com/package/insikt.js)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Deploy Pages](https://github.com/benneberg/insikt/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/benneberg/insikt/actions/workflows/deploy-pages.yml)
+
+
+**A mobile-first, zero-dependency developer console for debugging directly inside the browser.**
+
+Desktop DevTools are excellent. Mobile debugging is still painful. INSIKT provides a clean, elegant, mobile-first debugging experience directly inside the browser without requiring remote debugging setups or desktop tooling.
+
+> 🌐 **Live Demo & Documentation**: [benneberg.github.io/insikt](https://benneberg.github.io/insikt/)
+
+
 A mobile-first in-browser developer console and debugging overlay.
 INSIKT brings developer tooling directly into mobile browsers with an elegant overlay UI for logs, errors, requests, storage inspection, and runtime debugging.
 ---
