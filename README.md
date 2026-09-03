@@ -12,8 +12,6 @@ Desktop DevTools are excellent. Mobile debugging is still painful. INSIKT provid
 > 🌐 **Live Demo & Documentation**: [benneberg.github.io/insikt](https://benneberg.github.io/insikt/)
 
 
-A mobile-first in-browser developer console and debugging overlay.
-INSIKT brings developer tooling directly into mobile browsers with an elegant overlay UI for logs, errors, requests, storage inspection, and runtime debugging.
 ---
 # Features
 - Mobile-first debugging UI
