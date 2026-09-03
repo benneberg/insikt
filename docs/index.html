@@ -1,83 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>INSIKT</title>
-
-  <link rel="stylesheet" href="./style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INSIKT — Mobile-First Browser DevTools</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
+  <header>
+    <div class="logo">INSIKT</div>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="https://github.com/benneberg/insikt" target="_blank">GitHub</a>
+    </nav>
+  </header>
 
-  <main class="app">
-
-    <!-- HERO -->
+  <main>
     <section class="hero">
-      <h1>INSIKT</h1>
-      <p class="subtitle">
-        Mobile-first in-page debugging system
-      </p>
-
-      <p class="description">
-        Capture logs, network calls, errors, storage, and runtime events directly inside the browser.
-      </p>
+      <h1>Debugging, <span class="accent">elevated.</span></h1>
+      <p class="subtitle">A mobile-first, zero-dependency developer console for debugging directly inside the browser. No remote setups. No desktop tooling required.</p>
+      <div class="cta-group">
+        <a href="#install" class="btn primary">Get Started</a>
+        <a href="https://github.com/benneberg/insikt" class="btn secondary">View on GitHub</a>
+      </div>
     </section>
 
-    <!-- PRIMARY ACTION -->
-    <section class="primary">
-      <button id="activateBtn" class="btn primary-btn">
-        Activate INSIKT
-      </button>
-    </section>
-
-    <!-- DEMO -->
-    <section class="demo">
-      <h2>Demo</h2>
-
-      <button id="demoBtn" class="btn secondary-btn">
-        ▶ Run simulated debug session
-      </button>
-
-      <p class="hint">
-        Generates logs, network requests, errors, and async events.
-      </p>
-    </section>
-
-    <!-- ADVANCED -->
-    <section class="advanced">
-
-      <button id="toggleAdvanced" class="btn link-btn">
-        Advanced triggers ▾
-      </button>
-
-      <div id="advancedPanel" class="advanced-panel hidden">
-
-        <button class="mini" data-action="log">Log Object</button>
-        <button class="mini" data-action="warn">Warn</button>
-        <button class="mini" data-action="error">Error</button>
-        <button class="mini" data-action="info">Info</button>
-
-        <button class="mini" data-action="fetch">Test Fetch</button>
-        <button class="mini" data-action="xhr">Test XHR</button>
-
-        <button class="mini" data-action="idb">Seed IndexedDB</button>
-
-        <button class="mini danger" data-action="throw">Throw Error</button>
-        <button class="mini danger" data-action="reject">Reject Promise</button>
-
+    <section id="install" class="install-section">
+      <h2>Installation</h2>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span>NPM</span>
+          <button class="copy-btn" onclick="copyText('npm install insikt.js')">Copy</button>
+        </div>
+        <pre><code>npm install insikt.js</code></pre>
       </div>
 
+      <div class="code-block">
+        <div class="code-header">
+          <span>CDN</span>
+          <button class="copy-btn" onclick="copyText('<script src=\'https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js\'></script>')">Copy</button>
+        </div>
+        <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js"&gt;&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span>Bookmarklet</span>
+          <button class="copy-btn" onclick="copyText('javascript:(function(){const s=document.createElement(\'script\');s.src=\'https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js\';document.body.appendChild(s);})();')">Copy</button>
+        </div>
+        <pre><code>javascript:(function(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/insikt.js/dist/insikt.umd.js';document.body.appendChild(s);})();</code></pre>
+      </div>
     </section>
-
-    <!-- STATUS -->
-    <footer class="status">
-      Status: idle • Capture: off • Session: none
-    </footer>
-
   </main>
 
-  <script type="module" src="./demo.js"></script>
+  <footer>
+    <p>Built with precision. Licensed under MIT.</p>
+  </footer>
 
+  <script>
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+  </script>
 </body>
 </html>
