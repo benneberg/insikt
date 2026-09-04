@@ -1,6 +1,6 @@
 {
   "name": "insikt.js",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "A mobile-first in-browser developer console and debugging overlay.",
   "license": "MIT",
   "type": "module",
