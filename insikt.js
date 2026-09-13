@@ -1646,5 +1646,19 @@
   renderConsole();
 
   addLog('log', ['✅ DevConsole v2.0 loaded — click ⌥ to open']);
+  window.insikt = {
+    toggle:  togglePanel,
+    clear:   window.__dcClearAll,
+    init:    () => { /* already auto-inits, guard against double-run */ },
+    destroy: () => {
+      const fab = el.fab(), panel = el.panel();
+      if (fab)   fab.remove();
+      if (panel) panel.remove();
+      ['log','warn','error','info'].forEach(l => { if (_orig[l]) console[l] = _orig[l]; });
+      window.fetch = _origFetch;
+      XMLHttpRequest.prototype.open = _origOpen;
+      XMLHttpRequest.prototype.send = _origSend;
+    }
+  };
 
 })();
