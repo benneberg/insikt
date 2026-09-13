@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.js'),
+      entry: resolve(__dirname, 'insikt.js'),
       name: 'insikt',
       formats: ['es', 'umd'],
       fileName: (format) => `insikt.${format}.js`
