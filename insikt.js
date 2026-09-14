@@ -1956,14 +1956,12 @@
     let skipUntil = -1;
 
     S.logs.forEach((log, index) => {
-      // Separator: show when a live entry follows restored entries
       if (!log.restored && previousRestored === true) {
         frag.appendChild(createReloadSeparator());
       }
 
       previousRestored = !!log.restored;
 
-      // Skip entries that are already rendered inside a group container
       if (index < skipUntil) return;
 
       const entry = createConsoleEntry(log, index);
@@ -1971,12 +1969,12 @@
       if (entry) {
         frag.appendChild(entry);
 
-        // If this was a group, skip its children at the top level
         if (log.type === 'group' && entry.dataset.groupEnd) {
           skipUntil = parseInt(entry.dataset.groupEnd, 10);
         }
       }
     });
+
 
 
     o.appendChild(frag);
@@ -3546,245 +3544,83 @@
   // 16. SETTINGS
   // ═══════════════════════════════════════════════════════════════
 
+  function makeToggle(id, name, desc, checked) {
+    return `
+      <div class="dc-setting-row">
+        <div class="dc-setting-info">
+          <div class="dc-setting-name">${name}</div>
+          <div class="dc-setting-desc">${desc}</div>
+        </div>
+        <label class="dc-toggle">
+          <input type="checkbox" id="${id}" ${checked ? 'checked' : ''}>
+          <span class="dc-toggle-track"></span>
+        </label>
+      </div>`;
+  }
+
+  function makeSelect(id, name, desc, options, current) {
+    return `
+      <div class="dc-setting-row">
+        <div class="dc-setting-info">
+          <div class="dc-setting-name">${name}</div>
+          <div class="dc-setting-desc">${desc}</div>
+        </div>
+        <select class="dc-select" id="${id}">
+          ${options.map(v => `<option value="${v}" ${current === v ? 'selected' : ''}>${v}</option>`).join('')}
+        </select>
+      </div>`;
+  }
+
   function renderSettings() {
     const o = el.settOut();
     if (!o) return;
 
-    o.innerHTML = `
-      <div class="dc-setting-row">
+    const ss = S.settings;
+
+    o.innerHTML =
+      makeToggle('s-ts', 'Timestamps',          'Show time prefix on each log entry',              ss.timestamps) +
+      makeToggle('s-as', 'Auto-scroll',          'Scroll to latest entry automatically',            ss.autoScroll) +
+      makeToggle('s-ce', 'Capture Global Errors','window.onerror + unhandledrejection',             ss.captureErrors) +
+      makeToggle('s-mn', 'Monitor Network',      'Intercept fetch + XHR requests',                 ss.monitorNetwork) +
+      makeToggle('s-pb', 'Persist Across Reload','Keep console and network history in sessionStorage', ss.persistBuffer) +
+      makeSelect('s-fs', 'Font Size',            'Console output font size (px)',  [10,11,12,13,14],          ss.fontSize) +
+      makeSelect('s-me', 'Max Log Entries',      'Older entries are discarded',   [100,250,500,1000,2000],   ss.maxEntries) +
+      `<div class="dc-setting-row" style="border:none">
         <div class="dc-setting-info">
-          <div class="dc-setting-name">Timestamps</div>
-          <div class="dc-setting-desc">
-            Show time prefix on each log entry
-          </div>
+          <div class="dc-setting-name" style="color:var(--dc-red)">Clear All Data</div>
+          <div class="dc-setting-desc">Wipe logs, network history and persistent buffer</div>
         </div>
+        <button class="dc-clear-btn" id="dc-settings-clear">Clear</button>
+      </div>`;
 
-        <label class="dc-toggle">
-          <input
-            type="checkbox"
-            id="s-ts"
-            ${S.settings.timestamps ? 'checked' : ''}
-          >
-          <span class="dc-toggle-track"></span>
-        </label>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Auto-scroll</div>
-          <div class="dc-setting-desc">
-            Scroll to latest entry automatically
-          </div>
-        </div>
-
-        <label class="dc-toggle">
-          <input
-            type="checkbox"
-            id="s-as"
-            ${S.settings.autoScroll ? 'checked' : ''}
-          >
-          <span class="dc-toggle-track"></span>
-        </label>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Capture Global Errors</div>
-          <div class="dc-setting-desc">
-            window.onerror + unhandledrejection
-          </div>
-        </div>
-
-        <label class="dc-toggle">
-          <input
-            type="checkbox"
-            id="s-ce"
-            ${S.settings.captureErrors ? 'checked' : ''}
-          >
-          <span class="dc-toggle-track"></span>
-        </label>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Monitor Network</div>
-          <div class="dc-setting-desc">
-            Intercept fetch + XHR requests
-          </div>
-        </div>
-
-        <label class="dc-toggle">
-          <input
-            type="checkbox"
-            id="s-mn"
-            ${S.settings.monitorNetwork ? 'checked' : ''}
-          >
-          <span class="dc-toggle-track"></span>
-        </label>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Persist Across Reload</div>
-          <div class="dc-setting-desc">
-            Keep console and network history in sessionStorage
-          </div>
-        </div>
-
-        <label class="dc-toggle">
-          <input
-            type="checkbox"
-            id="s-pb"
-            ${S.settings.persistBuffer ? 'checked' : ''}
-          >
-          <span class="dc-toggle-track"></span>
-        </label>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Font Size</div>
-          <div class="dc-setting-desc">
-            Console output font size (px)
-          </div>
-        </div>
-
-        <select class="dc-select" id="s-fs">
-          ${
-            [10,11,12,13,14]
-              .map(s => `
-                <option
-                  value="${s}"
-                  ${S.settings.fontSize === s ? 'selected' : ''}
-                >
-                  ${s}px
-                </option>
-              `)
-              .join('')
-          }
-        </select>
-      </div>
-
-      <div class="dc-setting-row">
-        <div class="dc-setting-info">
-          <div class="dc-setting-name">Max Log Entries</div>
-          <div class="dc-setting-desc">
-            Older entries are discarded
-          </div>
-        </div>
-
-        <select class="dc-select" id="s-me">
-          ${
-            [100,250,500,1000,2000]
-              .map(s => `
-                <option
-                  value="${s}"
-                  ${S.settings.maxEntries === s ? 'selected' : ''}
-                >
-                  ${s}
-                </option>
-              `)
-              .join('')
-          }
-        </select>
-      </div>
-
-      <div class="dc-setting-row" style="border:none">
-        <div class="dc-setting-info">
-          <div
-            class="dc-setting-name"
-            style="color:var(--dc-red)"
-          >
-            Clear All Data
-          </div>
-
-          <div class="dc-setting-desc">
-            Wipe logs, network history and persistent buffer
-          </div>
-        </div>
-
-        <button class="dc-clear-btn" id="dc-settings-clear">
-          Clear
-        </button>
-      </div>
-    `;
-
-    document.getElementById('s-ts').onchange =
-      e => {
-        S.settings.timestamps = e.target.checked;
-        saveSettings();
-        renderConsole();
-      };
-
-    document.getElementById('s-as').onchange =
-      e => {
-        S.settings.autoScroll = e.target.checked;
-        saveSettings();
-      };
-
-    document.getElementById('s-ce').onchange =
-      e => {
-        S.settings.captureErrors = e.target.checked;
-        saveSettings();
-      };
-
-    document.getElementById('s-mn').onchange =
-      e => {
-        S.settings.monitorNetwork = e.target.checked;
-        saveSettings();
-      };
-
-    document.getElementById('s-pb').onchange =
-      e => {
-        S.settings.persistBuffer = e.target.checked;
-        saveSettings();
-
-        if (!S.settings.persistBuffer) {
-          clearPersistentBuffer();
-        } else {
-          persistBuffer();
-        }
-      };
-
-    document.getElementById('s-fs').onchange =
-      e => {
-        S.settings.fontSize =
-          parseInt(e.target.value, 10);
-
-        saveSettings();
-
-        if (S.activeTab === 'console') {
-          renderConsole();
-        }
-      };
-
-    document.getElementById('s-me').onchange =
-      e => {
-        S.settings.maxEntries =
-          parseInt(e.target.value, 10);
-
-        trimLogs();
-
-        if (S.network.length > S.settings.maxEntries) {
-          S.network =
-            S.network.slice(0, S.settings.maxEntries);
-        }
-
-        saveSettings();
-        persistBuffer();
-
-        updateTabCount('console', S.logs.length);
-        updateTabCount('network', S.network.length);
-
-        renderConsole();
-      };
-
-    document.getElementById('dc-settings-clear')
-      .addEventListener(
-        'click',
-        window.__dcClearAll
-      );
+    document.getElementById('s-ts').onchange = e => { ss.timestamps    = e.target.checked; saveSettings(); renderConsole(); };
+    document.getElementById('s-as').onchange = e => { ss.autoScroll    = e.target.checked; saveSettings(); };
+    document.getElementById('s-ce').onchange = e => { ss.captureErrors = e.target.checked; saveSettings(); };
+    document.getElementById('s-mn').onchange = e => { ss.monitorNetwork= e.target.checked; saveSettings(); };
+    document.getElementById('s-pb').onchange = e => {
+      ss.persistBuffer = e.target.checked;
+      saveSettings();
+      ss.persistBuffer ? persistBuffer() : clearPersistentBuffer();
+    };
+    document.getElementById('s-fs').onchange = e => {
+      ss.fontSize = parseInt(e.target.value, 10);
+      saveSettings();
+      if (S.activeTab === 'console') renderConsole();
+    };
+    document.getElementById('s-me').onchange = e => {
+      ss.maxEntries = parseInt(e.target.value, 10);
+      trimLogs();
+      if (S.network.length > ss.maxEntries) S.network = S.network.slice(0, ss.maxEntries);
+      saveSettings();
+      persistBuffer();
+      updateTabCount('console', S.logs.length);
+      updateTabCount('network', S.network.length);
+      renderConsole();
+    };
+    document.getElementById('dc-settings-clear').addEventListener('click', window.__dcClearAll);
   }
+
+
 
   window.__dcClearAll = function() {
     S.logs = [];
