@@ -9,6 +9,9 @@ export default defineConfig({
       formats: ['es', 'umd'],
       fileName: (format) => `insikt.${format}.js`
     },
+    rollupOptions: {
+      output: { exports: 'named' }
+    },
     outDir: 'dist',
     minify: 'terser',
     sourcemap: true
