@@ -1953,20 +1953,31 @@
     const frag = document.createDocumentFragment();
 
     let previousRestored = null;
+    let skipUntil = -1;
 
     S.logs.forEach((log, index) => {
-      if (log.restored && previousRestored === false) {
+      // Separator: show when a live entry follows restored entries
+      if (!log.restored && previousRestored === true) {
         frag.appendChild(createReloadSeparator());
       }
 
       previousRestored = !!log.restored;
 
+      // Skip entries that are already rendered inside a group container
+      if (index < skipUntil) return;
+
       const entry = createConsoleEntry(log, index);
 
       if (entry) {
         frag.appendChild(entry);
+
+        // If this was a group, skip its children at the top level
+        if (log.type === 'group' && entry.dataset.groupEnd) {
+          skipUntil = parseInt(entry.dataset.groupEnd, 10);
+        }
       }
     });
+
 
     o.appendChild(frag);
 
