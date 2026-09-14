@@ -15,13 +15,15 @@ Desktop DevTools are excellent. Mobile debugging is still painful. INSIKT provid
 
 ## Features
 
-- **Console capture** — intercepts `log`, `warn`, `error`, and `info`
-- **Network inspector** — monitors Fetch and XHR requests with status, duration, and headers
-- **Runtime error tracking** — captures uncaught exceptions and unhandled rejections
+- **Console capture** — intercepts `log`, `warn`, `error`, and `info` with timestamps and log-level styling
+- **Network inspector** — monitors Fetch and XHR requests with status, duration, headers, and URL filtering
+- **Runtime error tracking** — captures uncaught exceptions and unhandled promise rejections
 - **Storage inspector** — browse localStorage, sessionStorage, cookies, and IndexedDB
 - **Built-in REPL** — evaluate JavaScript expressions directly in the overlay
-- **DOM inspector** — tap to inspect any element on the page
-- **Floating overlay UI** — non-intrusive FAB with a full-screen panel
+- **DOM inspector** — tap any element on the page to inspect its attributes and structure
+- **Copy to clipboard** — export console logs or network requests as formatted text with one tap
+- **Settings panel** — toggle timestamps, auto-scroll, max entries, font size, and network monitoring
+- **Floating overlay UI** — non-intrusive FAB that stays out of the way until you need it
 - **Bookmarklet support** — inject into any page without modifying source
 - **Zero dependencies** — single file, no build step required for CDN usage
 
@@ -29,7 +31,7 @@ Desktop DevTools are excellent. Mobile debugging is still painful. INSIKT provid
 
 ## Why INSIKT?
 
-Mobile debugging has no good native solution. Remote debugging requires cables, separate machines, or platform-specific setup. Browser-based tools like `vconsole` exist but feel dated.
+Mobile debugging has no good native solution. Remote debugging requires cables, separate machines, or platform-specific setup. Browser-based tools exist but feel dated.
 
 INSIKT is designed around three principles:
 
@@ -128,21 +130,18 @@ Output is written to `dist/` as both ES module (`insikt.es.js`) and UMD (`insikt
 
 ## Roadmap
 
-**v1.1**
-- [ ] `console.table` support
-- [ ] Request filtering
-- [ ] Collapsible log entries
-- [ ] Improved object inspection
-
 **v1.2**
-- [ ] Log export
-- [ ] Persistent sessions
-- [ ] WebSocket inspector
+- [ ] `console.table` support
+- [ ] `console.group` / `console.groupCollapsed` support
+- [ ] Improved object inspection for deeply nested structures
+- [ ] Network request and response body capture
+- [ ] Persistent log buffer across page reloads
 
 **v2.0**
-- [ ] Plugin API
+- [ ] WebSocket inspector
 - [ ] Performance timeline
-- [ ] Theme system
+- [ ] Log and network session export to file
+- [ ] Plugin API
 - [ ] React/Vue adapters
 
 ---
